@@ -14,6 +14,7 @@ import { CreateApplicantDto } from './dto/create-applicant.dto';
 import { UpdateApplicantDto } from './dto/update-applicant.dto';
 import { UpdateStatusDto } from './dto/update-status.dto';
 import { UpdateNotesDto } from './dto/update-notes.dto';
+import { ApplicantStatus, InternshipTrack } from 'src/generated/prisma/enums';
 
 
 @Controller('applicants')
@@ -31,11 +32,13 @@ export class ApplicantsController {
 
     @Get()
     getApplicantByQuery(
-        @Query('name') name:string,
-        @Query('email') email:string,
-        @Query('id') id:string
+        @Query('name') name?:string,
+        @Query('email') email?:string,
+        @Query('id') id?:string,
+        @Query('status') status?:InternshipTrack,
+        @Query('track') track?:ApplicantStatus,
     ){
-        return this.applicantService.getApplicantByQuery(name,email,id)
+        return this.applicantService.getApplicantByQuery(name,email,id,status,track)
     }
    
 
