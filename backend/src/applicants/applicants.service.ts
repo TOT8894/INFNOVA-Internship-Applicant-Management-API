@@ -4,11 +4,12 @@ import { CreateApplicantDto } from './dto/create-applicant.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { UpdateStatusDto } from './dto/update-status.dto';
 import { UpdateNotesDto } from './dto/update-notes.dto';
+import { ApplicantStatus, InternshipTrack } from 'src/generated/prisma/enums';
 
 @Injectable()
 export class ApplicantsService {
     constructor(
-        private readOnly prismaService:PrismaService
+        private readonly prismaService:PrismaService
     ){}
 
 
@@ -21,38 +22,42 @@ export class ApplicantsService {
         })
     }
 
-
     
-    async getApplicantByQuery(name:string,email:string,id:string){ 
-        let result = await this.prismaService.applicant.applicant()
-        if(name){
-            result =  result.findFirrst({
-                where:{
-                    name,
-                    deletedAt:null
-                }
-            })
-        }
-        if(email){
-            result =  result.findFirrst({
-                where:{
-                    email,
-                    deletedAt:null
-                }
-            }) 
-        }
-        if(id){
-           result =  result.findFirrst({
-                where:{
-                    id:Number(id),
-                    deletedAt:null
-                }
-            }) 
-        }
-        if(!result){
+    async getApplicantByQuery(
+            name?:string,
+            email?:string,
+            id?:string,
+            track?:InternshipTrack,
+            status?:ApplicantStatus,
+        ){ 
+        let applicant = await this.prismaService.applicant.findMany({
+            where:{
+                deletedAt:null,
+                ...(name&&{
+                    name:{
+                        contains:name
+                    }
+                }),
+                ...(email&&{
+                    email:{
+                        contains:email
+                    }
+                }),
+                ...(id&&{
+                    id:Number(id)
+                }),
+                ...(track&&{
+                    track
+                }),
+                ...(status&&{
+                    status
+                })
+            }
+        })
+        if(applicant.length==0){
             throw new NotFoundException("user not found")
         }
-        return result
+        return applicant
     }
 
 
@@ -87,7 +92,7 @@ export class ApplicantsService {
 
         return this.prismaService.applicant.create({
             data:createApplicantDto,
-            message:"applicant created successfuly"}
+            }
         )
                     
     }
@@ -100,7 +105,6 @@ export class ApplicantsService {
         return  this.prismaService.applicant.update({
             where:{id:Number(id)},
             data:updateApplicantDto,
-            message:`${id} this Applicant updated`
         })
         
     }
@@ -112,7 +116,6 @@ export class ApplicantsService {
         return  this.prismaService.applicant.update({
             where:{id:Number(id)},
             data:{deletedAt:new Date()},
-            message:`${id} this Applicant updated`
         })
     }
 
