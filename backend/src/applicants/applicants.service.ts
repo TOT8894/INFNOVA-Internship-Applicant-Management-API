@@ -1,54 +1,146 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { UpdateApplicantDto } from './dto/update-applicant.dto';
 import { CreateApplicantDto } from './dto/create-applicant.dto';
+import { PrismaService } from 'src/prisma/prisma.service';
+import { UpdateStatusDto } from './dto/update-status.dto';
+import { UpdateNotesDto } from './dto/update-notes.dto';
 
 @Injectable()
 export class ApplicantsService {
-    private Applicant=[
-        {id:124,name:"abebe", email:"abc"},
-        {id:125,name:"adane", email:"abcd"},
-        {id:126,name:"gebre", email:"abcde"},
-    ]
-    getallApplicant(){
-        return this.Applicant
+    constructor(
+        private readOnly prismaService:PrismaService
+    ){}
+
+
+
+    async getallApplicant(){
+        return this.prismaService.applicant.findMany({
+            where:{
+                deletedAt:null
+            }
+        })
     }
 
-    getApplicantByQuery(name:string,email:string,id:number){ 
-        let result = this.Applicant
+
+    
+    async getApplicantByQuery(name:string,email:string,id:string){ 
+        let result = await this.prismaService.applicant.applicant()
         if(name){
-            result =  result.filter((Applicant:any)=>(Applicant.name.toLowerCase().includes(name.toLowerCase())))
+            result =  result.findFirrst({
+                where:{
+                    name,
+                    deletedAt:null
+                }
+            })
         }
         if(email){
-            result =  result.filter((Applicant:any)=>(Applicant.email.toLowerCase().includes(email.toLowerCase())))
+            result =  result.findFirrst({
+                where:{
+                    email,
+                    deletedAt:null
+                }
+            }) 
         }
         if(id){
-            result =  result.filter(Applicant=>Applicant.id==id)
+           result =  result.findFirrst({
+                where:{
+                    id:Number(id),
+                    deletedAt:null
+                }
+            }) 
+        }
+        if(!result){
+            throw new NotFoundException("user not found")
         }
         return result
     }
 
-    getApplicantById(id:number){
-        let applicant = this.Applicant.find(Applicant=>Applicant.id==id)
+
+
+    async getApplicantById(id:string){
+        const applicant = await this.prismaService.applicant.findFirst({
+            where:{
+               id:Number(id),
+               deletedAt:null
+            }
+        })
+        if(!applicant){
+            throw new NotFoundException("user not found")
+
+        }
         return applicant
     }
-    createApplicant(createApplicantDto:CreateApplicantDto){
-        this.Applicant.push(createApplicantDto)
-        return {data:createApplicantDto,message:"applicant created successfuly"}
+
+
+
+    async createApplicant(createApplicantDto:CreateApplicantDto){
+        const existingUser = await this.prismaService.applicant.findUnique({
+            where:{
+                email:createApplicantDto.email,
+                deletedAt:null
+            }
+        })
+
+        if(existingUser){
+            throw new ConflictException("user already exist")
+        }
+
+        return this.prismaService.applicant.create({
+            data:createApplicantDto,
+            message:"applicant created successfuly"}
+        )
+                    
     }
     
-    updateApplicant(id:number,updateApplicantDto:UpdateApplicantDto){
-         let index = this.Applicant.findIndex(Applicant=>Applicant.id==id)
-        this.Applicant[index]={
-            ...this.Applicant[index],
-            ...updateApplicantDto
-        }
+
+
+    async updateApplicant(id:string,updateApplicantDto:UpdateApplicantDto){
+
+        await this.getApplicantById(id)
+        return  this.prismaService.applicant.update({
+            where:{id:Number(id)},
+            data:updateApplicantDto,
+            message:`${id} this Applicant updated`
+        })
         
-        return {data:this.Applicant[index],message:`${id} this Applicant updated`}
     }
 
-    deleteApplicant(id:number){
-        let index = this.Applicant.findIndex(Applicant=>Applicant.id==id)
-        this.Applicant.splice(index,1)
-        return {message:`${id} this Applicant deleted`}
+
+
+    async deleteApplicant(id:string){
+        await this.getApplicantById(id)
+        return  this.prismaService.applicant.update({
+            where:{id:Number(id)},
+            data:{deletedAt:new Date()},
+            message:`${id} this Applicant updated`
+        })
+    }
+
+
+    async  updateStatus(id:string,updateStatusDto:UpdateStatusDto){
+        const applicant = await this.getApplicantById(id)
+        if(
+            applicant.status==="REJECTED" && 
+            updateStatusDto.status==="ACCEPTED"){
+            throw new BadRequestException('Applicant cannot move directly from Rejected to Accepted')
+        }
+
+        return this.prismaService.applicant.update({
+            where:{
+                id:Number(id)
+            },
+            data:{status:updateStatusDto.status}
+        })
+    }
+
+
+    async updateNotes(id:string,updateNotesDto:UpdateNotesDto){
+        await this.getApplicantById(id)
+        return this.prismaService.applicant.update({
+            where:{
+                id:Number(id)
+            },
+            data:{notes:updateNotesDto.notes}
+        })
     }
 }
