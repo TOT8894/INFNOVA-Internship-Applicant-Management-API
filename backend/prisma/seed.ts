@@ -4,9 +4,15 @@ import * as bcrypt from 'bcrypt';
 import dotenv from 'dotenv';
 
 dotenv.config();
+const databaseUrl = process.env.DATABASE_URL?.trim();
+const email = process.env.ADMIN_EMAIL?.trim();
+const password = process.env.ADMIN_PASSWORD;
+if (!databaseUrl ) {
+  throw new Error('DATABASE_URL is required');
+}
 
 const adapter = new PrismaBetterSqlite3({
-  url: process.env.DATABASE_URL!,
+  url: databaseUrl,
 });
 
 const prisma = new PrismaClient({
@@ -14,9 +20,9 @@ const prisma = new PrismaClient({
 });
 
 async function main() {
-  const password = process.env.ADMIN_PASSWORD!;
-  const email = process.env.ADMIN_EMAIL!;
-
+if ( !email || !password) {
+  throw new Error('DATABASE_URL, ADMIN_EMAIL, and ADMIN_PASSWORD are required');
+}
   const hashedPassword = await bcrypt.hash(password, 10);
 
   const admin = await prisma.admin.upsert({
