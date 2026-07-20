@@ -1,7 +1,7 @@
 -- CreateTable
 CREATE TABLE "Admin" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    "email" TEXT NOT NULL,
+    "email" TEXT NOT NULL UNIQUE,
     "password" TEXT NOT NULL,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" DATETIME NOT NULL
@@ -11,7 +11,7 @@ CREATE TABLE "Admin" (
 CREATE TABLE "Applicant" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "name" TEXT NOT NULL,
-    "email" TEXT NOT NULL,
+    "email" TEXT NOT NULL UNIQUE,
     "phone" TEXT,
     "track" TEXT NOT NULL,
     "status" TEXT NOT NULL DEFAULT 'PENDING',
@@ -22,7 +22,7 @@ CREATE TABLE "Applicant" (
 );
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Admin_email_key" ON "Admin"("email");
+CREATE UNIQUE INDEX "Admin_email_key" ON "Admin" ("email");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Applicant_email_key" ON "Applicant"("email");
+CREATE UNIQUE INDEX "Applicant_email_key" ON "Applicant" ("email");
