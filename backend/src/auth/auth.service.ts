@@ -41,9 +41,10 @@ export class AuthService {
 
     async login(loginDto:LoginDto){
         let {email,password} = loginDto
-        let admin = await this.prismaService.admin.findUnique({
+        let admin = await this.prismaService.admin.findFirst({
             where:{
                 email,
+                deletedAt:null
             }
         })
         if(!admin){
@@ -56,17 +57,17 @@ export class AuthService {
             throw new UnauthorizedException("invalid credential")
         }
         const payload={
-            id:admin.id,
+            sub:admin.id,
             email:admin.email
         }
         let accesstoken = await this.jwtService.signAsync(
-            {payload},
-            {ACCESS_KEY,
+            payload,
+            {secret:ACCESS_KEY,
             expiresIn:ACCESS_EXPIRE_DATE}
         )
         let refreshtoken = await this.jwtService.signAsync(
             payload,
-            {REFRESH_KEY,
+            {secret:REFRESH_KEY,
             expiresIn: REFRESH_EXPIRE_DATE}
         )
         return{
