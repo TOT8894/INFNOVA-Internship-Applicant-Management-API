@@ -21,7 +21,7 @@ const prisma = new PrismaClient({
 
 async function main() {
 if ( !email || !password) {
-  throw new Error('DATABASE_URL, ADMIN_EMAIL, and ADMIN_PASSWORD are required');
+  throw new Error('ADMIN_EMAIL, and ADMIN_PASSWORD are required');
 }
   const hashedPassword = await bcrypt.hash(password, 10);
 
