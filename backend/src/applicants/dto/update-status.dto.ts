@@ -7,5 +7,5 @@ export class UpdateStatusDto {
     enum: ApplicantStatus,
   })
   @IsEnum(ApplicantStatus)
-  status: ApplicantStatus;
+  status!: ApplicantStatus;
 }
