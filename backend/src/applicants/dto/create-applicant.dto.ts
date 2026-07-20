@@ -15,13 +15,13 @@ export class CreateApplicantDto {
   @IsString()
   @IsNotEmpty()
   @MinLength(5)
-  name: string;
+  name!: string;
 
   @ApiProperty()
   @IsEmail()
   @IsNotEmpty()
   @MinLength(5)
-  email: string;
+  email!: string;
 
   @ApiPropertyOptional()
   @IsOptional()
@@ -33,7 +33,7 @@ export class CreateApplicantDto {
     enum: InternshipTrack,
   })
   @IsEnum(InternshipTrack)
-  track: InternshipTrack;
+  track!: InternshipTrack;
 
   @ApiPropertyOptional()
   @IsOptional()
