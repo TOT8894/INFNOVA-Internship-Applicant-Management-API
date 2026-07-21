@@ -24,7 +24,7 @@ export class AuthService {
         let admin = await this.prismaService.admin.findFirst({
             where:{
                 id:Number(id),
-                deletedAt:null
+                
             },
             select:{
                 id: true,
@@ -44,7 +44,7 @@ export class AuthService {
         let admin = await this.prismaService.admin.findFirst({
             where:{
                 email,
-                deletedAt:null
+                
             }
         })
         if(!admin){
@@ -63,12 +63,12 @@ export class AuthService {
         let accesstoken = await this.jwtService.signAsync(
             payload,
             {secret:ACCESS_KEY,
-            expiresIn:ACCESS_EXPIRE_DATE}
+            expiresIn:ACCESS_EXPIRE_DATE as any}
         )
         let refreshtoken = await this.jwtService.signAsync(
             payload,
             {secret:REFRESH_KEY,
-            expiresIn: REFRESH_EXPIRE_DATE}
+            expiresIn: REFRESH_EXPIRE_DATE as any}
         )
         return{
             accesstoken,
