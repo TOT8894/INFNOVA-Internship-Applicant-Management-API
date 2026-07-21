@@ -7,6 +7,7 @@ import {
     Param, 
     Body, 
     Patch, 
+    UseGuards,
 } from '@nestjs/common';
 
 import { ApplicantsService } from './applicants.service';
@@ -15,9 +16,11 @@ import { UpdateApplicantDto } from './dto/update-applicant.dto';
 import { UpdateStatusDto } from './dto/update-status.dto';
 import { UpdateNotesDto } from './dto/update-notes.dto';
 import { ApplicantStatus, InternshipTrack } from 'src/generated/prisma/enums';
-
-
+import { AuthGuard } from '@nestjs/passport';
+import { ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
 @Controller('applicants')
+@ApiBearerAuth('access-token')
+@UseGuards(AuthGuard('jwt'))
 export class ApplicantsController {
     constructor(
         private readonly applicantService:ApplicantsService
@@ -31,14 +34,42 @@ export class ApplicantsController {
 
 
     @Get()
+
+      // By default, Swagger may display your @Query() parameters as required
+    @ApiQuery({
+        name: 'name',
+        required: false,
+        type: String,
+    })
+    @ApiQuery({
+        name: 'email',
+        required: false,
+        type: String,
+    })
+    @ApiQuery({
+        name: 'id',
+        required: false,
+        type: String,
+    })
+    @ApiQuery({
+        name: 'status',
+        required: false,
+        enum: ApplicantStatus,
+    })
+    @ApiQuery({
+        name: 'track',
+        required: false,
+        enum: InternshipTrack,
+    }) 
+    
     getApplicantByQuery(
         @Query('name') name?:string,
         @Query('email') email?:string,
         @Query('id') id?:string,
-        @Query('status') status?:InternshipTrack,
-        @Query('track') track?:ApplicantStatus,
+        @Query('status') status?:ApplicantStatus,
+        @Query('track') track?:InternshipTrack,
     ){
-        return this.applicantService.getApplicantByQuery(name,email,id,status,track)
+        return this.applicantService.getApplicantByQuery(name,email,id,track,status)
     }
    
 
