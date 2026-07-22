@@ -4,7 +4,7 @@ import { CreateApplicantDto } from './dto/create-applicant.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { UpdateStatusDto } from './dto/update-status.dto';
 import { UpdateNotesDto } from './dto/update-notes.dto';
-import { ApplicantQueryDto } from './dto/applicant-query.dto';
+import { ApplicantStatus, InternshipTrack } from 'src/generated/prisma/enums';
 
 @Injectable()
 export class ApplicantsService {
@@ -22,80 +22,96 @@ export class ApplicantsService {
         })
     }
 
-    async getApplicantByQuery(query: ApplicantQueryDto) {
-        const {
-        name,
-        email,
-        status,
-        track,
-        page = 1,
-        limit = 10,
+   async getApplicantByQuery(
+        name?: string,
+        email?: string,
+        id?: string,
+        track?: InternshipTrack,
+        status?: ApplicantStatus,
+        page = '1',
+        limit = '10',
         sortBy = 'createdAt',
-        sortOrder = 'desc',
-        } = query;
+        sortOrder: 'asc' | 'desc' = 'desc',
+        ) {
+        const pageNumber = Number(page);
+        const limitNumber = Number(limit);
 
-        const allowedSortFields = [
-        'name',
-        'email',
-        'createdAt',
-        'updatedAt',
-        ];
-
-        const safeSortBy = allowedSortFields.includes(sortBy)
-        ? sortBy
-        : 'createdAt';
-
-        const safeSortOrder =
-        sortOrder === 'asc' ? 'asc' : 'desc';
-
-        const skip = (page - 1) * limit;
+        const skip =
+            (pageNumber - 1) * limitNumber;
 
         const where = {
-        deletedAt: null,
+            deletedAt: null,
 
-        ...(name && {
+            ...(name && {
             name: {
-            contains: name,
+                contains: name,
             },
-        }),
+            }),
 
-        ...(email && {
+            ...(email && {
             email: {
-            contains: email,
+                contains: email,
             },
-        }),
+            }),
 
-        ...(status && {
-            status,
-        }),
+            ...(id && {
+            id: Number(id),
+            }),
 
-        ...(track && {
+            ...(track && {
             track,
-        }),
+            }),
+
+            ...(status && {
+            status,
+            }),
         };
 
-        const [applicants, total] = await Promise.all([
-        this.prismaService.applicant.findMany({
+        const allowedSortFields = [
+            'name',
+            'email',
+            'createdAt',
+            'updatedAt',
+        ];
+
+        const safeSortBy =
+            allowedSortFields.includes(sortBy)
+            ? sortBy
+            : 'createdAt';
+
+        const safeSortOrder =
+            sortOrder === 'asc'
+            ? 'asc'
+            : 'desc';
+
+        const [
+            applicants,
+            total,
+        ] = await Promise.all([
+            this.prismaService.applicant.findMany({
             where,
             skip,
-            take: limit,
+            take: limitNumber,
             orderBy: {
-            [safeSortBy]: safeSortOrder,
+                [safeSortBy]: safeSortOrder,
             },
-        }),
+            }),
 
-        this.prismaService.applicant.count({
+            this.prismaService.applicant.count({
             where,
-        }),
+            }),
         ]);
 
         return {
-        data: applicants,
-        meta: {
-                page,
-                limit,
-                total,
-                totalPages: Math.ceil(total / limit),
+            data: applicants,
+
+            meta: {
+            page: pageNumber,
+            limit: limitNumber,
+            total,
+            totalPages: Math.ceil(
+                total / limitNumber,
+            ),
             },
         };
     }
