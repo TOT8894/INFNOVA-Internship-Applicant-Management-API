@@ -431,7 +431,10 @@ Run the seed command:
 ```bash
 npx prisma db seed
 ```
-
+Run the command to push seed data to dev.db
+```bash
+npx prisma db pull
+```
 The administrator credentials are read from:
 
 ```env
