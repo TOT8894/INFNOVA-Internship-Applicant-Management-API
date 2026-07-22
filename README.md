@@ -68,6 +68,33 @@ The API allows authenticated administrators to:
 This project was developed as part of the **INFNOVA Technologies Backend Internship Practical Challenge**.
 
 ---
+---
+
+# 📦 Useful Commands
+
+| Command                                        | Description                  |
+| ---------------------------------------------- | ---------------------------- |
+| `npm install`                                  | Install dependencies         |
+| `npm run start:dev`                            | Start development server     |
+| `npm run build`                                | Build the application        |
+| `npm run start:prod`                           | Start production application |
+| `npx prisma generate`                          | Generate Prisma Client       |
+| `npx prisma migrate dev --name migration_name` | Create a migration           |
+| `npx prisma migrate reset`                     | Reset the database           |
+| `npx prisma db seed`                           | Seed the database            |
+| `npx prisma studio`                            | Open Prisma Studio           |
+
+---
+---
+
+## 🔗 Resources
+
+| Resource | URL                          |
+| -------- | ---------------------------- |
+| API      | `http://localhost:3000/api`  |
+| Swagger  | `http://localhost:3000/docs` |
+
+---
 
 ## ✨ Features
 
@@ -821,23 +848,7 @@ Generate coverage:
 npm run test:cov
 ```
 
----
 
-# 📦 Useful Commands
-
-| Command                                        | Description                  |
-| ---------------------------------------------- | ---------------------------- |
-| `npm install`                                  | Install dependencies         |
-| `npm run start:dev`                            | Start development server     |
-| `npm run build`                                | Build the application        |
-| `npm run start:prod`                           | Start production application |
-| `npx prisma generate`                          | Generate Prisma Client       |
-| `npx prisma migrate dev --name migration_name` | Create a migration           |
-| `npx prisma migrate reset`                     | Reset the database           |
-| `npx prisma db seed`                           | Seed the database            |
-| `npx prisma studio`                            | Open Prisma Studio           |
-
----
 
 # 🧠 Key Design Decisions
 
@@ -966,41 +977,7 @@ With more time, I would improve the project by adding:
 
 ---
 
-# 🧹 Git Ignore
 
-The following files should not be committed:
-
-```gitignore
-node_modules/
-dist/
-.env
-dev.db
-*.db
-coverage/
-```
-
-The following project files should be committed:
-
-```text
-prisma/schema.prisma
-prisma/migrations/
-prisma/seed.ts
-prisma.config.ts
-.env.example
-```
-
-The `dev.db` file is intentionally excluded because it is a local SQLite database file. The database structure and initial data can be recreated using the Prisma migrations and seed script.
-
----
-
-## 🔗 Resources
-
-| Resource | URL                          |
-| -------- | ---------------------------- |
-| API      | `http://localhost:3000/api`  |
-| Swagger  | `http://localhost:3000/docs` |
-
----
 
 # 👨‍💻 Author
 
