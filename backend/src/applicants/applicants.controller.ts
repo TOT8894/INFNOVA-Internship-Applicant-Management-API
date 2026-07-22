@@ -17,7 +17,7 @@ import { UpdateStatusDto } from './dto/update-status.dto';
 import { UpdateNotesDto } from './dto/update-notes.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
-import { ApplicantQueryDto } from './dto/applicant-query.dto';
+import { ApplicantStatus, InternshipTrack } from 'src/generated/prisma/enums';
 
 @Controller('applicants')
 @ApiBearerAuth('access-token')
@@ -35,10 +35,75 @@ export class ApplicantsController {
 
 
     @Get()
+    
+      // By default, Swagger may display @Query() parameters as required sop i use the following @ApiQuery()
+        @ApiQuery({
+            name: 'name',
+            required: false,
+            type: String,
+        })
+        @ApiQuery({
+            name: 'email',
+            required: false,
+            type: String,
+        })
+        @ApiQuery({
+            name: 'id',
+            required: false,
+            type: String,
+        })
+        @ApiQuery({
+            name: 'status',
+            required: false,
+            enum: ApplicantStatus,
+        })
+        @ApiQuery({
+            name: 'track',
+            required: false,
+            enum: InternshipTrack,
+        }) 
+        @ApiQuery({
+            name: 'page',
+            required: false,
+            
+        }) 
+         @ApiQuery({
+            name: 'limit',
+            required: false,
+            
+        }) 
+         @ApiQuery({
+            name: 'sortBy',
+            required: false,
+            
+        }) 
+         @ApiQuery({
+            name: 'sortOrder',
+            required: false,
+            
+        }) 
     getApplicantByQuery(
-        @Query() query:ApplicantQueryDto
-    ){
-        return this.applicantService.getApplicantByQuery(query)
+        @Query('name') name?: string,
+        @Query('email') email?: string,
+        @Query('id') id?: string,
+        @Query('status') status?: ApplicantStatus,
+        @Query('track') track?: InternshipTrack,
+        @Query('page') page?: string,
+        @Query('limit') limit?: string,
+        @Query('sortBy') sortBy?: string,
+        @Query('sortOrder') sortOrder?: 'asc' | 'desc',
+    ) {
+    return this.applicantService.getApplicantByQuery(
+        name,
+        email,
+        id,
+        track,
+        status,
+        page,
+        limit,
+        sortBy,
+        sortOrder,
+    );
     }
    
 
