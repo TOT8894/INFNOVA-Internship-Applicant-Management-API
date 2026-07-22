@@ -4,7 +4,7 @@ import { CreateApplicantDto } from './dto/create-applicant.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { UpdateStatusDto } from './dto/update-status.dto';
 import { UpdateNotesDto } from './dto/update-notes.dto';
-import { ApplicantStatus, InternshipTrack } from 'src/generated/prisma/enums';
+import { ApplicantQueryDto } from './dto/applicant-query.dto';
 
 @Injectable()
 export class ApplicantsService {
@@ -22,44 +22,83 @@ export class ApplicantsService {
         })
     }
 
-    
-    async getApplicantByQuery(
-            name?:string,
-            email?:string,
-            id?:string,
-            track?:InternshipTrack,
-            status?:ApplicantStatus,
-        ){ 
-        let applicant = await this.prismaService.applicant.findMany({
-            where:{
-                deletedAt:null,
-                ...(name&&{
-                    name:{
-                        contains:name
-                    }
-                }),
-                ...(email&&{
-                    email:{
-                        contains:email
-                    }
-                }),
-                ...(id&&{
-                    id:Number(id)
-                }),
-                ...(track&&{
-                    track
-                }),
-                ...(status&&{
-                    status
-                })
-            }
-        })
-        if(applicant.length==0){
-            throw new NotFoundException("user not found")
-        }
-        return applicant
-    }
+    async getApplicantByQuery(query: ApplicantQueryDto) {
+        const {
+        name,
+        email,
+        status,
+        track,
+        page = 1,
+        limit = 10,
+        sortBy = 'createdAt',
+        sortOrder = 'desc',
+        } = query;
 
+        const allowedSortFields = [
+        'name',
+        'email',
+        'createdAt',
+        'updatedAt',
+        ];
+
+        const safeSortBy = allowedSortFields.includes(sortBy)
+        ? sortBy
+        : 'createdAt';
+
+        const safeSortOrder =
+        sortOrder === 'asc' ? 'asc' : 'desc';
+
+        const skip = (page - 1) * limit;
+
+        const where = {
+        deletedAt: null,
+
+        ...(name && {
+            name: {
+            contains: name,
+            },
+        }),
+
+        ...(email && {
+            email: {
+            contains: email,
+            },
+        }),
+
+        ...(status && {
+            status,
+        }),
+
+        ...(track && {
+            track,
+        }),
+        };
+
+        const [applicants, total] = await Promise.all([
+        this.prismaService.applicant.findMany({
+            where,
+            skip,
+            take: limit,
+            orderBy: {
+            [safeSortBy]: safeSortOrder,
+            },
+        }),
+
+        this.prismaService.applicant.count({
+            where,
+        }),
+        ]);
+
+        return {
+        data: applicants,
+        meta: {
+                page,
+                limit,
+                total,
+                totalPages: Math.ceil(total / limit),
+            },
+        };
+    }
 
 
     async getApplicantById(id:string){
