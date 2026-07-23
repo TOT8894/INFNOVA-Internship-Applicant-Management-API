@@ -9,9 +9,22 @@
   A secure REST API for managing internship applicants through an administrator dashboard backend.
 </p>
 
-<h2 align="center">📸 Project Screenshots</h2>
+---
 
-<p align="center"> <a href="screenshot.md"> <strong>👉 View Project Screenshots</strong> </a> 
+<p > screeshot: <a href="screenshot.md"> <strong>View Project Screenshots</strong> </a> 
+</p>
+<p>
+  Base Api:
+  <a href="https://infnova-internship-applicant-management-vd1t.onrender.com">
+    https://infnova-internship-applicant-management-vd1t.onrender.com
+  </a>
+</p>
+
+<p>
+  Swagger:
+  <a href="https://infnova-internship-applicant-management-vd1t.onrender.com/docs">
+    View Swagger Documentation
+  </a>
 </p>
 
 ---
@@ -53,14 +66,23 @@ This project was developed as part of the **INFNOVA Technologies Backend Interns
 
 ---
 
+## 🔐 Default Administrator Credentials
+
+> ⚠️ These credentials are for testing and demonstration purposes only, and check it on postman also some features may not work on swagger
+
+| Field | Value |
+|---|---|
+| **Admin Email** | `shanbeldires7@gmail.com` |
+| **Admin Password** | `12345678` |
+
 ---
 
 ## 🔗 Resources
 
 | Resource | URL                          |
 | -------- | ---------------------------- |
-| API      | `http://localhost:3000/api`  |
-| Swagger  | `http://localhost:3000/docs` |
+| API      | `https://infnova-internship-applicant-management-vd1t.onrender.com/docs/api`  |
+| Swagger  | `https://infnova-internship-applicant-management-vd1t.onrender.com/docs/docs` |
 
 ---
 
