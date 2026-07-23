@@ -9,6 +9,11 @@
   A secure REST API for managing internship applicants through an administrator dashboard backend.
 </p>
 
+<h2 align="center">📸 Project Screenshots</h2>
+
+<p align="center"> <a href="screenshot.md"> <strong>👉 View Project Screenshots</strong> </a> 
+</p>
+
 ---
 
 ## 📑 Table of Contents
@@ -16,37 +21,16 @@
 * [📌 Overview](#-overview)
 * [✨ Features](#-features)
 * [🛠️ Technology Stack](#️-technology-stack)
-* [📂 Project Structure](#-project-structure)
-* [🏗️ Architecture](#️-architecture)
-* [🚀 Getting Started](#-getting-started)
-* [📋 Prerequisites](#-prerequisites)
-* [1️⃣ Clone the Repository](#1️⃣-clone-the-repository)
-* [2️⃣ Install Dependencies](#2️⃣-install-dependencies)
+* [📂 Project Structure and Architecture](#-project-structure)
+* [2️⃣ Install Dependencies and set up the project](#2️⃣-install-dependencies)
 * [⚙️ Environment Configuration](#️-environment-configuration)
 * [🗃️ Database](#️-database)
 * [🔄 Prisma Setup](#-prisma-setup)
 * [🌱 Database Seeding](#-database-seeding)
 * [▶️ Running the Application](#️-running-the-application)
 * [📚 API Documentation](#-api-documentation)
-* [🔐 Authentication](#-authentication)
-* [📡 API Endpoints](#-api-endpoints)
-* [📄 Pagination](#-pagination)
-* [🔍 Search](#-search)
-* [🏷️ Filtering](#️-filtering)
-* [↕️ Sorting](#️-sorting)
-* [📊 Applicant Statuses](#-applicant-statuses)
-* [💼 Internship Tracks](#-internship-tracks)
-* [📝 Internal Notes](#-internal-notes)
-* [🗑️ Soft Deletion](#️-soft-deletion)
-* [✅ Validation](#️-validation)
-* [⚠️ Error Handling](#️-error-handling)
-* [🔒 Security](#-security)
-* [🧪 Testing](#-testing)
-* [📦 Useful Commands](#-useful-commands)
-* [🧠 Key Design Decisions](#-key-design-decisions)
 * [🔮 Future Improvements](#-future-improvements)
 * [📌 Assumptions and Known Limitations](#-assumptions-and-known-limitations)
-* [🧹 Git Ignore](#-git-ignore)
 * [👨‍💻 Author](#-author)
 
 ---
@@ -68,23 +52,7 @@ The API allows authenticated administrators to:
 This project was developed as part of the **INFNOVA Technologies Backend Internship Practical Challenge**.
 
 ---
----
 
-# 📦 Useful Commands
-
-| Command                                        | Description                  |
-| ---------------------------------------------- | ---------------------------- |
-| `npm install`                                  | Install dependencies         |
-| `npm run start:dev`                            | Start development server     |
-| `npm run build`                                | Build the application        |
-| `npm run start:prod`                           | Start production application |
-| `npx prisma generate`                          | Generate Prisma Client       |
-| `npx prisma migrate dev --name migration_name` | Create a migration           |
-| `npx prisma migrate reset`                     | Reset the database           |
-| `npx prisma db seed`                           | Seed the database            |
-| `npx prisma studio`                            | Open Prisma Studio           |
-
----
 ---
 
 ## 🔗 Resources
@@ -98,26 +66,26 @@ This project was developed as part of the **INFNOVA Technologies Backend Interns
 
 ## ✨ Features
 
-* 🔐 Administrator authentication using JWT bearer tokens
-* 🔑 Secure password hashing with bcrypt
-* 🛡️ Protected routes using NestJS Guards and Passport JWT
-* 👤 Applicant CRUD operations
-* 🗑️ Soft deletion of applicants
-* 📄 Paginated applicant listing
-* 🔍 Search by applicant name or email
-* 🏷️ Filter by application status and internship track
-* ↕️ Sort applicants
-* 🔄 Update applicant status
-* 📝 Add and update internal notes
-* 📊 Dashboard summary statistics
-* ✅ DTO-based request validation
-* ⚠️ Centralized HTTP exception handling
-* 📚 Swagger/OpenAPI documentation
-* 🗃️ Prisma ORM with SQLite
-* 🔄 Database migrations
-* 🌱 Database seed data
-* 🔒 Environment-based configuration
-* 🧪 Automated testing
+*  Administrator authentication using JWT bearer tokens
+*  Secure password hashing with bcrypt
+*  Protected routes using NestJS Guards and Passport JWT
+*  Applicant CRUD operations
+*  Soft deletion of applicants
+*  Paginated applicant listing
+*  Search by applicant name or email
+*  Filter by application status and internship track
+* ↕ Sort applicants
+*  Update applicant status
+*  Add and update internal notes
+*  Dashboard summary statistics
+*  DTO-based request validation
+*  Centralized HTTP exception handling
+*  Swagger/OpenAPI documentation
+*  Prisma ORM with SQLite
+*  Database migrations
+*  Database seed data
+*  Environment-based configuration
+*  Automated testing
 
 ---
 
@@ -147,13 +115,15 @@ backend/
 │   │
 │   ├── applicants/
 │   │   ├── dto/
+│   │   │   ├──applicant-query.dto.ts
 │   │   │   ├── create-applicant.dto.ts
 │   │   │   ├── update-applicant.dto.ts
 │   │   │   ├── update-status.dto.ts
 │   │   │   └── update-notes.dto.ts
-│   │   │
+│   │   ├── applicants.controller.spec.ts
 │   │   ├── applicants.controller.ts
 │   │   ├── applicants.service.ts
+│   │   ├── applicants.service.spec.ts
 │   │   └── applicants.module.ts
 │   │
 │   ├── auth/
@@ -166,12 +136,16 @@ backend/
 │   │   ├── strategies/
 │   │   │   └── jwt.strategy.ts
 │   │   │
+│   │   ├── auth.controller.spec.ts
 │   │   ├── auth.controller.ts
+│   │   ├── auth.service.spec.ts
 │   │   ├── auth.service.ts
 │   │   └── auth.module.ts
 │   │
 │   ├── dashboard/
+│   │   ├── dashboard.controller.spec.ts
 │   │   ├── dashboard.controller.ts
+│   │   ├── dashboard.service.spec.ts
 │   │   ├── dashboard.service.ts
 │   │   └── dashboard.module.ts
 │   │
@@ -181,14 +155,19 @@ backend/
 │   │
 │   ├── prisma/
 │   │   ├── prisma.module.ts
+│   │   ├── prisma.service.spec.ts
 │   │   └── prisma.service.ts
 │   │
 │   ├── app.controller.ts
 │   ├── app.module.ts
+│   ├── app.service.ts
 │   └── main.ts
 │
 ├── prisma/
 │   ├── migrations/
+│   │   ├── 20260719152000_init/
+│   │         ├── migration.sql
+│   │    ├── migration_lock.toml
 │   ├── schema.prisma
 │   └── seed.ts
 │
@@ -259,17 +238,6 @@ Business logic is kept inside services rather than controllers to improve mainta
 
 ---
 
-# 🚀 Getting Started
-
-## 📋 Prerequisites
-
-Make sure the following are installed:
-
-* Node.js
-* npm
-* Git
-
----
 
 ## 1️⃣ Clone the Repository
 
@@ -312,7 +280,6 @@ REFRESH_EXPIRE_DATE=7d
 PORT=3000
 ```
 
-> ⚠️ The `.env` file contains sensitive information and should not be committed to Git.
 
 ---
 
@@ -338,29 +305,6 @@ SQLite stores the database locally in:
 ```text
 dev.db
 ```
-
-### Important
-
-The `dev.db` SQLite database file is **not committed to the repository**.
-
-The database can be recreated from:
-
-* `prisma/schema.prisma`
-* `prisma/migrations/`
-* `prisma/seed.ts`
-
-This keeps local database files and data out of version control.
-
-Prisma provides typed database methods such as:
-
-```typescript
-const applicants =
-  await this.prismaService.applicant.findMany();
-```
-
-The application does not directly write SQL queries for normal database operations.
-
----
 
 # 🔄 Prisma Setup
 
@@ -388,35 +332,8 @@ prisma.applicant.delete()
 
 ---
 
-## Create a Migration
-
-After modifying:
-
-```text
-prisma/schema.prisma
-```
-
-run:
-
-```bash
-npx prisma migrate dev --name migration_name
-```
-
-Example:
-
-```bash
-npx prisma migrate dev --name add_applicant_notes
-```
-
-Migrations are stored in:
-
-```text
-prisma/migrations/
-```
-
-Migrations should be committed to Git.
-
----
+## Create a database
+create dev.db file
 
 ## Reset the Database
 
@@ -501,13 +418,6 @@ Start the compiled application:
 npm run start:prod
 ```
 
-Compiled files are generated in:
-
-```text
-dist/
-```
-
-The `dist/` directory should not be committed to Git.
 
 ---
 
@@ -601,11 +511,47 @@ Example response:
 
 ```json
 {
-  "total": 20,
-  "pending": 8,
-  "shortlisted": 5,
-  "accepted": 4,
-  "rejected": 3
+  "totalApplicant": 80,
+  "applicantsGroupByStatus": [
+    {
+      "status": "ACCEPTED",
+      "totalApplicants": 22
+    },
+    {
+      "status": "PENDING",
+      "totalApplicants": 25
+    },
+    {
+      "status": "REJECTED",
+      "totalApplicants": 8
+    },
+    {
+      "status": "SHORTLISTED",
+      "totalApplicants": 25
+    }
+  ],
+  "applicantsGroupByTrack": [
+    {
+      "track": "BACKEND_DEVELOPMENT",
+      "totalApplicants": 17
+    },
+    {
+      "track": "DATA_ANALYTICS",
+      "totalApplicants": 15
+    },
+    {
+      "track": "FRONTEND_DEVELOPMENT",
+      "totalApplicants": 17
+    },
+    {
+      "track": "MOBILE_DEVELOPMENT",
+      "totalApplicants": 16
+    },
+    {
+      "track": "UI_UX_DESIGN",
+      "totalApplicants": 15
+    }
+  ]
 }
 ```
 
@@ -827,26 +773,6 @@ The application implements:
 * No secrets committed to Git
 
 ---
-
-# 🧪 Testing
-
-Run tests:
-
-```bash
-npm test
-```
-
-Run tests in watch mode:
-
-```bash
-npm run test:watch
-```
-
-Generate coverage:
-
-```bash
-npm run test:cov
-```
 
 
 
